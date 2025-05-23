@@ -1,3 +1,3 @@
-module github.com/KonMam/duckserve
+module duckserve
 
 go 1.24.3
