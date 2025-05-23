@@ -1,0 +1,27 @@
+# Binaries for programs
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Compiled objects
+*.o
+
+# Go module cache (usually ~/.go)
+# For this project, you might also have a local 'pkg' directory
+pkg/
+
+# IDE specific files
+.idea/
+.vscode/
+
+# Environment variables
+.env
+
+# DuckDB specific files (if they create temporary files)
+# You'll add more here as you discover them
+# For example, if DuckDB creates a database file named 'duck.db'
+*.db
