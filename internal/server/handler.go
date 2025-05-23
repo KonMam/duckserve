@@ -39,9 +39,6 @@ func QueryHandler(w http.ResponseWriter, req *http.Request) {
 
 	sqlQuery := string(sqlBytes)
 
-	fmt.Printf("Received SQL query: %s\n", sqlQuery)
-	fmt.Fprintf(w, "Received your SQL query: %s\n", sqlQuery)
-
 	select {
 	case <- querySemaphore:
 		defer func() {
@@ -51,7 +48,7 @@ func QueryHandler(w http.ResponseWriter, req *http.Request) {
 		fmt.Println("Semaphore slot acquired. Executing query...")
 		
 		select {
-		case <- time.After(50 * time.Microsecond):
+		case <- time.After(2 * time.Second):
 			fmt.Printf("Received SQL Query: %s\n", sqlQuery)
 			fmt.Fprintf(w, "Query proccessed (simulated): %s\n", sqlQuery)
 		case <- time.After(queryTimeout):
