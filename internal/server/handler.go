@@ -41,6 +41,31 @@ func QueryHandler(w http.ResponseWriter, req *http.Request) {
 
 	fmt.Printf("Received SQL query: %s\n", sqlQuery)
 	fmt.Fprintf(w, "Received your SQL query: %s\n", sqlQuery)
+
+	select {
+	case <- querySemaphore:
+		defer func() {
+			querySemaphore <- struct{}{}
+			fmt.Println("Semaphore slot released.")
+		}()
+		fmt.Println("Semaphore slot acquired. Executing query...")
+		
+		select {
+		case <- time.After(50 * time.Microsecond):
+			fmt.Printf("Received SQL Query: %s\n", sqlQuery)
+			fmt.Fprintf(w, "Query proccessed (simulated): %s\n", sqlQuery)
+		case <- time.After(queryTimeout):
+			fmt.Printf("Query timed out after %s: %s\n", queryTimeout, sqlQuery)
+			http.Error(w, fmt.Sprintf("Query timed out after %s: %s\n", queryTimeout, sqlQuery), http.StatusRequestTimeout)
+			return
+		}
+
+
+	case <- time.After(5 * time.Second):
+		fmt.Println("Failed to acquire semaphore slot within 5 seconds. Server busy.")
+		http.Error(w, "Server too busy. Try again later.", http.StatusServiceUnavailable)
+		return
+	}
 }
 
 
